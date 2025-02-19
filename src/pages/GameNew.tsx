@@ -1,6 +1,7 @@
 
 import { useState } from "react";
 import { Users, Crown, X, Play, Check, MessageCircle } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 type GameView = "select" | "host" | "join" | "lobby";
 type PlayerStatus = "host" | "ready" | "waiting";
@@ -12,6 +13,7 @@ interface Player {
 }
 
 const GameNew = () => {
+  const navigate = useNavigate();
   const [view, setView] = useState<GameView>("select");
   const [roomCode, setRoomCode] = useState("");
   const [players, setPlayers] = useState<Player[]>([
@@ -25,6 +27,10 @@ const GameNew = () => {
     { id: "1", player: "System", text: "Game lobby created" },
     { id: "2", player: "Player 2", text: "Hello everyone!" },
   ]);
+
+  const handleStartGame = () => {
+    navigate("/game/play");
+  };
 
   const SelectView = () => (
     <div className="flex flex-col gap-6 items-center">
@@ -167,7 +173,10 @@ const GameNew = () => {
 
       {players[0].status === "host" && (
         <div className="fixed bottom-4 left-1/2 -translate-x-1/2">
-          <button className="btn-primary bg-accent hover:bg-accent/90 flex items-center gap-2">
+          <button 
+            onClick={handleStartGame}
+            className="btn-primary bg-accent hover:bg-accent/90 flex items-center gap-2"
+          >
             <Play className="w-5 h-5" />
             Start Game
           </button>
