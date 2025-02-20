@@ -284,6 +284,24 @@ const GamePlay = () => {
         <>
           <GameInterface />
           {phase === "voting" && <VotingPhase />}
+          
+          {/* Action Buttons */}
+          <div className="fixed bottom-4 right-4 flex gap-3">
+            {!showChat && (
+              <button
+                onClick={() => setShowChat(true)}
+                className="p-3 bg-primary/80 hover:bg-primary/90 rounded-full shadow-lg"
+              >
+                <MessageCircle className="w-6 h-6" />
+              </button>
+            )}
+            <button
+              onClick={() => setPhase("voting")}
+              className="p-3 bg-accent/80 hover:bg-accent/90 rounded-full shadow-lg"
+            >
+              <Vote className="w-6 h-6" />
+            </button>
+          </div>
         </>
       )}
     </>
