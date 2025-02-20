@@ -1,6 +1,5 @@
-
 import { useState } from "react";
-import { Shield, Skull, Swords, MessageCircle, Vote, PanelRight } from "lucide-react";
+import { Shield, Skull, Swords, MessageCircle, Vote, PanelRight, Timer } from "lucide-react";
 
 type GamePhase = "role-reveal" | "day" | "night" | "voting";
 type Role = "villager" | "killer" | "detective" | "medic";
@@ -18,11 +17,25 @@ const GamePlay = () => {
   const [phase, setPhase] = useState<GamePhase>("role-reveal");
   const [showKillerPanel, setShowKillerPanel] = useState(false);
   const [showChat, setShowChat] = useState(true);
+  const [selectedVote, setSelectedVote] = useState<string | null>(null);
   const [players, setPlayers] = useState<GamePlayer[]>([
     { id: "1", name: "Player 1", role: "killer", state: "alive", votes: 0 },
     { id: "2", name: "Player 2", role: "villager", state: "alive", votes: 2 },
     { id: "3", name: "Player 3", role: "detective", state: "dead", votes: 1 },
+    { id: "4", name: "Player 4", role: "villager", state: "alive", votes: 3 },
+    { id: "5", name: "Player 5", role: "villager", state: "alive", votes: 1 },
   ]);
+
+  const handleVote = (playerId: string) => {
+    if (selectedVote === playerId) return;
+    
+    setPlayers(players.map(p => ({
+      ...p,
+      votes: p.id === playerId ? p.votes + 1 : 
+             p.id === selectedVote ? p.votes - 1 : p.votes
+    })));
+    setSelectedVote(playerId);
+  };
 
   const RoleReveal = () => (
     <div className="fixed inset-0 bg-black/95 flex items-center justify-center z-50 animate-fadeIn">
@@ -39,6 +52,71 @@ const GamePlay = () => {
             className="btn-primary mt-4"
           >
             Begin Game
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+
+  const VotingPhase = () => (
+    <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-40">
+      <div className="w-full max-w-4xl p-6 space-y-8">
+        <div className="text-center space-y-4">
+          <h2 className="medieval-title text-4xl text-primary">Time to Vote</h2>
+          <p className="text-white/80 text-lg">
+            Who do you think is the Killer? Vote wisely...
+          </p>
+          <div className="flex items-center justify-center gap-2">
+            <Timer className="w-5 h-5 text-primary" />
+            <span className="text-xl">1:30</span>
+          </div>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {players
+            .filter(p => p.state === "alive")
+            .map((player) => (
+              <button
+                key={player.id}
+                onClick={() => handleVote(player.id)}
+                className={`
+                  bg-card/30 backdrop-blur-sm rounded-lg p-6 text-left
+                  transition-all duration-300 hover:bg-card/50
+                  ${selectedVote === player.id ? 'ring-2 ring-primary' : ''}
+                `}
+              >
+                <div className="flex items-center justify-between mb-4">
+                  <span className="font-medieval text-lg">{player.name}</span>
+                  {selectedVote === player.id && (
+                    <Vote className="w-5 h-5 text-primary" />
+                  )}
+                </div>
+                
+                <div className="mt-4">
+                  <div className="flex justify-between items-center text-sm text-white/60">
+                    <span>Votes: {player.votes}</span>
+                    <div 
+                      className="h-1 flex-1 mx-4 bg-black/30 rounded-full overflow-hidden"
+                    >
+                      <div 
+                        className="h-full bg-primary transition-all duration-500"
+                        style={{ 
+                          width: `${(player.votes / players.length) * 100}%` 
+                        }}
+                      />
+                    </div>
+                  </div>
+                </div>
+              </button>
+            ))}
+        </div>
+
+        <div className="flex justify-center mt-8">
+          <button 
+            onClick={() => setPhase("night")}
+            className="btn-primary bg-accent"
+          >
+            Confirm Vote
           </button>
         </div>
       </div>
@@ -202,7 +280,12 @@ const GamePlay = () => {
 
   return (
     <>
-      {phase === "role-reveal" ? <RoleReveal /> : <GameInterface />}
+      {phase === "role-reveal" ? <RoleReveal /> : (
+        <>
+          <GameInterface />
+          {phase === "voting" && <VotingPhase />}
+        </>
+      )}
     </>
   );
 };
