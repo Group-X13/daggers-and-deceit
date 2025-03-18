@@ -1,14 +1,15 @@
-
-import { Toaster } from "@/components/ui/toaster";
-import { Toaster as Sonner } from "@/components/ui/sonner";
-import { TooltipProvider } from "@/components/ui/tooltip";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Index from "./pages/Index";
-import HowToPlay from "./pages/HowToPlay";
 import GameNew from "./pages/GameNew";
+import JoinGame from "./pages/JoinGame";
+import Lobby from "./pages/Lobby";
 import GamePlay from "./pages/GamePlay";
+import HowToPlay from "./pages/HowToPlay";
 import NotFound from "./pages/NotFound";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { TooltipProvider } from "@/components/ui/tooltip";
+import { Toaster } from "@/components/ui/toaster";
+import { Toaster as Sonner } from "@/components/ui/sonner";
 
 const queryClient = new QueryClient();
 
@@ -21,9 +22,12 @@ const App = () => (
         <BrowserRouter>
           <Routes>
             <Route path="/" element={<Index />} />
-            <Route path="/how-to-play" element={<HowToPlay />} />
             <Route path="/game/new" element={<GameNew />} />
-            <Route path="/game/play" element={<GamePlay />} />
+            <Route path="/game/join" element={<JoinGame />} />
+            <Route path="/lobby/:gameCode" element={<Lobby />} />
+            <Route path="/game/:gameCode" element={<GamePlay />} />{" "}
+            {/* ✅ FIXED: Now the route exists! */}
+            <Route path="/how-to-play" element={<HowToPlay />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>
