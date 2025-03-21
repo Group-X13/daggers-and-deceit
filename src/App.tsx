@@ -6,6 +6,8 @@ import Lobby from "./pages/Lobby";
 import GamePlay from "./pages/GamePlay";
 import HowToPlay from "./pages/HowToPlay";
 import NotFound from "./pages/NotFound";
+import VotingLobby from "./pages/VotingLobby";
+import Leaderboard from "./pages/Leaderboard";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { Toaster } from "@/components/ui/toaster";
@@ -26,8 +28,9 @@ const App = () => (
             <Route path="/game/join" element={<JoinGame />} />
             <Route path="/lobby/:gameCode" element={<Lobby />} />
             <Route path="/game/:gameCode" element={<GamePlay />} />{" "}
-            {/* ✅ FIXED: Now the route exists! */}
             <Route path="/how-to-play" element={<HowToPlay />} />
+            <Route path="/voting/:gameKey" element={<VotingLobby />} />
+            <Route path="/leaderboard/:gameCode" element={<Leaderboard />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>

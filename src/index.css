@@ -1,6 +1,5 @@
-
-@import url('https://fonts.googleapis.com/css2?family=MedievalSharp&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=Crimson+Text:ital,wght@0,400;0,600;1,400&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=MedievalSharp&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Crimson+Text:ital,wght@0,400;0,600;1,400&display=swap");
 
 @tailwind base;
 @tailwind components;
@@ -10,29 +9,29 @@
   :root {
     --background: 0 0% 0%;
     --foreground: 0 0% 100%;
-    
+
     --primary: 0 59% 24%;
     --primary-foreground: 0 0% 100%;
-    
+
     --secondary: 0 43% 16%;
     --secondary-foreground: 0 0% 100%;
-    
+
     --accent: 0 73% 42%;
     --accent-foreground: 0 0% 100%;
-    
+
     --muted: 0 20% 20%;
     --muted-foreground: 0 0% 80%;
-    
+
     --card: 0 0% 5%;
     --card-foreground: 0 0% 100%;
-    
+
     --popover: 0 0% 5%;
     --popover-foreground: 0 0% 100%;
-    
+
     --border: 0 59% 24%;
     --input: 0 59% 24%;
     --ring: 0 59% 24%;
-    
+
     --radius: 0.5rem;
   }
 
@@ -40,7 +39,12 @@
     @apply bg-gradient-to-br from-primary to-black min-h-screen text-foreground font-crimson antialiased;
   }
 
-  h1, h2, h3, h4, h5, h6 {
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
     @apply font-medieval;
   }
 }
@@ -51,7 +55,7 @@
            transition-all duration-300 ease-out hover:scale-105 
            backdrop-blur-sm font-medieval tracking-wide;
   }
-  
+
   .game-container {
     @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8;
   }
@@ -75,4 +79,17 @@
     opacity: 1;
     transform: translateY(0);
   }
+}
+
+input {
+  color: black; /* Text color inside the input box */
+  background-color: white; /* Background color */
+  border: 1px solid #ccc; /* Light grey border */
+  padding: 8px;
+  font-size: 16px;
+}
+
+input::placeholder {
+  color: gray; /* Placeholder text color */
+  opacity: 1; /* Ensures placeholder visibility */
 }

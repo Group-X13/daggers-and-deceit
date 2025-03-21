@@ -2,56 +2,61 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 const JoinGame = () => {
-  const [playerName, setPlayerName] = useState("");
-  const [gameCode, setGameCode] = useState("");
   const navigate = useNavigate();
+  const [playerName, setPlayerName] = useState("");
+  const [gameKey, setGameKey] = useState("");
 
   const handleJoinGame = async () => {
-    if (!playerName.trim() || !gameCode.trim()) {
-      alert("Please enter your name and game code.");
+    if (!playerName.trim() || !gameKey.trim()) {
+      console.error("🚨 Error: Game key and player name are required!");
       return;
     }
 
-    localStorage.setItem("playerName", playerName.trim()); // ✅ Store player name
-
     try {
+      console.log(
+        `📡 Sending join request for Player: ${playerName}, Game Key: ${gameKey}`
+      );
+
       const response = await fetch("http://localhost:8000/join-game", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          gameKey: gameCode,
-          playerName: playerName.trim(),
-        }),
+        body: JSON.stringify({ playerName, gameKey }),
       });
 
       const data = await response.json();
-      if (data.error) {
-        alert(`Error: ${data.error}`);
+
+      if (response.ok) {
+        console.log("✅ Successfully joined game:", data);
+        localStorage.setItem("playerName", playerName);
+        navigate(`/lobby/${gameKey}`);
       } else {
-        navigate(`/lobby/${gameCode}`); // ✅ FIXED: Use backticks!
+        console.error("❌ Error joining game:", data.error);
       }
     } catch (error) {
-      console.error("❌ Error joining game:", error);
+      console.error("❌ Network error while joining game:", error);
     }
   };
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen">
-      <h1 className="text-2xl">Join a Game</h1>
+      <h1 className="text-2xl text-white">Join a Game</h1>
+
       <input
         type="text"
+        placeholder="Enter Name"
         value={playerName}
         onChange={(e) => setPlayerName(e.target.value)}
-        placeholder="Your Name"
-        className="mt-4 p-2 border border-gray-300 rounded"
+        className="mt-4 p-2 text-black rounded"
       />
+
       <input
         type="text"
-        value={gameCode}
-        onChange={(e) => setGameCode(e.target.value)}
-        placeholder="Game Code"
-        className="mt-4 p-2 border border-gray-300 rounded"
+        placeholder="Enter Game Code"
+        value={gameKey}
+        onChange={(e) => setGameKey(e.target.value)}
+        className="mt-4 p-2 text-black rounded"
       />
+
       <button
         onClick={handleJoinGame}
         className="mt-4 bg-green-500 text-white px-4 py-2 rounded"
