@@ -4,7 +4,9 @@ import { io } from "socket.io-client";
 import logo from "/logo.png";
 import shadowyFigures from "/shadowy-figures.png";
 
-const socket = io("http://localhost:8000", { autoConnect: false });
+const socket = io("https://deceit-and-daggers-back-end.onrender.com", {
+  autoConnect: false,
+});
 
 const Lobby = () => {
   const { gameCode } = useParams();
@@ -20,7 +22,9 @@ const Lobby = () => {
 
     const fetchGame = async () => {
       try {
-        const response = await fetch(`http://localhost:8000/games/${gameCode}`);
+        const response = await fetch(
+          `https://deceit-and-daggers-back-end.onrender.com/games/${gameCode}`
+        );
         const data = await response.json();
         setPlayers(data.players || []);
         setHostName(data.hostName.trim());
@@ -56,11 +60,14 @@ const Lobby = () => {
 
   const startGame = async () => {
     try {
-      await fetch("http://localhost:8000/start-game", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ gameKey: gameCode }),
-      });
+      await fetch(
+        "https://deceit-and-daggers-back-end.onrender.com/start-game",
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ gameKey: gameCode }),
+        }
+      );
     } catch (error) {
       console.error("Error starting game:", error);
     }

@@ -5,7 +5,9 @@ import Game1 from "./PotatoGame";
 import Game2 from "./CardGame";
 import Game3 from "./DaggerGame";
 
-const socket = io("http://localhost:8000", { autoConnect: false });
+const socket = io("https://deceit-and-daggers-back-end.onrender.com", {
+  autoConnect: false,
+});
 
 const GamePlay = () => {
   const { gameCode } = useParams();

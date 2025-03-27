@@ -14,11 +14,14 @@ const GameNew = () => {
     localStorage.setItem("playerName", playerName.trim()); // ✅ Store player name
 
     try {
-      const response = await fetch("http://localhost:8000/create-game", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ hostName: playerName.trim() }),
-      });
+      const response = await fetch(
+        "https://deceit-and-daggers-back-end.onrender.com/create-game",
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ hostName: playerName.trim() }),
+        }
+      );
 
       const data = await response.json();
       if (data.gameKey) {

@@ -17,11 +17,14 @@ const JoinGame = () => {
         `📡 Sending join request for Player: ${playerName}, Game Key: ${gameKey}`
       );
 
-      const response = await fetch("http://localhost:8000/join-game", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ playerName, gameKey }),
-      });
+      const response = await fetch(
+        "https://deceit-and-daggers-back-end.onrender.com/join-game",
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ playerName, gameKey }),
+        }
+      );
 
       const data = await response.json();
 

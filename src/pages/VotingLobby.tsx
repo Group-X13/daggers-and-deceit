@@ -2,7 +2,9 @@ import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { io } from "socket.io-client";
 
-const socket = io("http://localhost:8000", { autoConnect: false });
+const socket = io("https://deceit-and-daggers-back-end.onrender.com", {
+  autoConnect: false,
+});
 
 interface Player {
   name: string;
