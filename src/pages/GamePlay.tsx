@@ -1,25 +1,43 @@
-import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
+import { io } from "socket.io-client";
 import Game1 from "./PotatoGame";
 import Game2 from "./CardGame";
 import Game3 from "./DaggerGame";
 
+const socket = io("http://localhost:8000", { autoConnect: false });
+
 const GamePlay = () => {
-  const [assignedGame, setAssignedGame] = useState(null);
+  const { gameCode } = useParams();
   const navigate = useNavigate();
+  const [assignedGame, setAssignedGame] = useState(null);
+  const [playerName, setPlayerName] = useState("");
 
   useEffect(() => {
-    console.log("🔀 Randomly selecting a game...");
-    const gameComponents = [<Game1 />, <Game2 />, <Game3 />];
-    setAssignedGame(
-      gameComponents[Math.floor(Math.random() * gameComponents.length)]
-    );
+    const storedPlayerName = localStorage.getItem("playerName") || "";
+    setPlayerName(storedPlayerName);
 
-    // Auto transition to Voting Lobby after 15 seconds
-    setTimeout(() => {
-      navigate("/voting/host");
+    socket.connect();
+    socket.emit("joinRoom", gameCode);
+
+    const gameComponents = [<Game1 />, <Game2 />, <Game3 />];
+    const selectedGame =
+      gameComponents[Math.floor(Math.random() * gameComponents.length)];
+    setAssignedGame(selectedGame);
+
+    const timer = setTimeout(() => {
+      socket.emit("gameCompleted", {
+        gameKey: gameCode,
+        playerName: storedPlayerName,
+      });
+      navigate(`/voting/${gameCode}`);
     }, 15000);
-  }, [navigate]);
+
+    return () => {
+      socket.disconnect();
+      clearTimeout(timer);
+    };
+  }, [gameCode, navigate]);
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-darkRed text-white">

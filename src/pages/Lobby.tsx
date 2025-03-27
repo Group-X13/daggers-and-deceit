@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { io } from "socket.io-client";
-import logo from "/logo-removebg-preview.png";
-import shadowyFigures from "/shadowy-figures-removebg-preview.png";
+import logo from "/logo.png";
+import shadowyFigures from "/shadowy-figures.png";
 
 const socket = io("http://localhost:8000", { autoConnect: false });
 
@@ -10,23 +10,30 @@ const Lobby = () => {
   const { gameCode } = useParams();
   const navigate = useNavigate();
   const [players, setPlayers] = useState([]);
+  const [hostName, setHostName] = useState("");
+  const [isHost, setIsHost] = useState(false);
   const [gameStarted, setGameStarted] = useState(false);
 
   useEffect(() => {
-    if (!gameCode) return;
+    const storedPlayerName = localStorage.getItem("playerName")?.trim();
+    if (!gameCode || !storedPlayerName) return;
 
-    const fetchGameDetails = async () => {
+    const fetchGame = async () => {
       try {
         const response = await fetch(`http://localhost:8000/games/${gameCode}`);
         const data = await response.json();
-
         setPlayers(data.players || []);
-      } catch (error) {
-        console.error("❌ Error fetching game details:", error);
+        setHostName(data.hostName.trim());
+        setIsHost(
+          storedPlayerName.toLowerCase() === data.hostName.trim().toLowerCase()
+        );
+        if (data.gameStarted) setGameStarted(true);
+      } catch (err) {
+        console.error("Failed to fetch game:", err);
       }
     };
 
-    fetchGameDetails();
+    fetchGame();
     socket.connect();
     socket.emit("joinRoom", gameCode);
 
@@ -39,39 +46,56 @@ const Lobby = () => {
     });
 
     return () => {
-      socket.off("updatePlayers");
-      socket.off("gameStarted");
       socket.disconnect();
     };
   }, [gameCode]);
 
   useEffect(() => {
-    if (gameStarted) {
-      navigate(`/game/${gameCode}`);
-    }
+    if (gameStarted) navigate(`/game/${gameCode}`);
   }, [gameStarted, navigate, gameCode]);
 
   const startGame = async () => {
-    console.log("🚀 Game started! Redirecting all players...");
-    navigate(`/game/${gameCode}`);
+    try {
+      await fetch("http://localhost:8000/start-game", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ gameKey: gameCode }),
+      });
+    } catch (error) {
+      console.error("Error starting game:", error);
+    }
   };
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-darkRed text-white">
+      <img src={logo} alt="Logo" className="w-72 mb-4" />
       <h1 className="text-3xl font-bold">Lobby</h1>
-      <p className="text-xl mt-2">Game Code: {gameCode || "N/A"}</p>
+      <p className="text-xl mt-2">Game Code: {gameCode}</p>
+
       <ul className="mt-4 text-lg">
-        {players.map((player, index) => (
-          <li key={index}>{player.name}</li>
+        {players.map((p, i) => (
+          <li key={i}>{p.name}</li>
         ))}
       </ul>
 
-      <button
-        onClick={startGame}
-        className="mt-6 bg-red-600 px-6 py-3 rounded-lg text-xl hover:bg-red-800 transition"
-      >
-        Start Game
-      </button>
+      {!gameStarted && isHost ? (
+        <button
+          onClick={startGame}
+          className="mt-6 bg-red-600 px-6 py-3 rounded-lg text-xl hover:bg-red-800 transition"
+        >
+          Start Game
+        </button>
+      ) : !gameStarted ? (
+        <p className="mt-4 text-gray-400">
+          Waiting for host to start the game...
+        </p>
+      ) : null}
+
+      <img
+        src={shadowyFigures}
+        alt="Silhouettes"
+        className="w-96 mt-6 opacity-80"
+      />
     </div>
   );
 };
