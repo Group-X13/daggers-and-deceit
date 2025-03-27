@@ -4,9 +4,7 @@ import { io } from "socket.io-client";
 import logo from "/logo.png";
 import shadowyFigures from "/shadowy-figures.png";
 
-const socket = io("https://deceit-and-daggers-back-end.onrender.com", {
-  autoConnect: false,
-});
+const socket = io(import.meta.env.VITE_API_URL);
 
 const Lobby = () => {
   const { gameCode } = useParams();

@@ -5,9 +5,7 @@ import Game1 from "./PotatoGame";
 import Game2 from "./CardGame";
 import Game3 from "./DaggerGame";
 
-const socket = io("https://deceit-and-daggers-back-end.onrender.com", {
-  autoConnect: false,
-});
+const socket = io(import.meta.env.VITE_API_URL);
 
 const GamePlay = () => {
   const { gameCode } = useParams();

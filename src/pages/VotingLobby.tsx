@@ -2,9 +2,7 @@ import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { io } from "socket.io-client";
 
-const socket = io("https://deceit-and-daggers-back-end.onrender.com", {
-  autoConnect: false,
-});
+const socket = io(import.meta.env.VITE_API_URL);
 
 interface Player {
   name: string;
